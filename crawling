@@ -1,0 +1,157 @@
+import os
+import time
+import pandas as pd
+import pandas.io.sql as psql
+from xlutils.copy import copy
+from selenium import webdriver
+from sqlalchemy import create_engine
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
+import dart_fss
+from selenium.webdriver.support import expected_conditions as EC
+
+driver = webdriver.Chrome('chromedriver.exe')
+website = "https://dart.fss.or.kr/dsab007/main.do"
+
+# company=["케이씨씨글라스","한샘"]
+
+company="한샘"
+driver.get(website)
+
+data = []
+
+start = driver.find_element_by_xpath('//*[@id="searchForm"]/div[1]/div/ul/li/div[1]')
+sea = start.find_element_by_name('option')
+end = sea.find_element_by_xpath('//*[@id="option"]/option[2]')
+end.click()
+
+
+xapth = driver.find_element_by_xpath('//*[@id="searchArea_crp"]/div')
+search = xapth.find_element_by_name('textCrpNm')
+search.send_keys(company)
+search.send_keys(Keys.ENTER)
+
+
+try:
+    class_nm = "btnDate"
+
+    c = driver.find_element_by_xpath('//*[@id="searchForm"]/div[2]/div[1]/ul/li[3]/div[2]/div')
+    elem = c.find_element_by_xpath('//*[@id="date5"]')
+    elem.click()
+
+    bar = driver.find_element_by_xpath('//*[@id="psWrap"]')
+    # page = bar.find_elements_by_tag_name('li')
+    p = bar.find_elements_by_css_selector('a')
+
+    txt=[]
+    for li in p:
+        # num=li.text.strip()
+        # result = driver.find_elements_by_class_name("tL").text
+        s = driver.find_element_by_xpath('//*[@id="tbody"]')
+        ss = s.find_elements_by_tag_name("tr")
+        for index, value in enumerate(ss):
+            body = value.find_elements_by_tag_name("td")[2]
+            print(body.text)
+
+
+            # if body.title_contains('분기'):
+            s_text = '분기'
+            if s_text in body.text:
+                print("찾았다")
+                
+                a = body.find_element_by_tag_name("a")
+
+                driver.execute_script("arguments[0].click();", a)
+                driver.switch_to.window(driver.window_handles[1])
+
+
+                # find = driver.find_element_by_xpath('//*[@id="contentsWrapDiv"]/div[1]/div[2]')
+                find = driver.find_element_by_xpath('//*[@id="contentsWrapDiv"]/div[1]/div[2]')
+                # table = find.find_element_by_tag_name("ul")
+
+
+                tabl = find.find_element_by_tag_name('li')
+                # print(tabl[5])
+
+
+
+
+                # ul
+
+                tab = tabl.find_element_by_xpath("/html/body/div[3]/div/div[2]/div[1]/div[2]/ul/ul/li[5]/ul/li[2]")
+                # ta = tabl.find_element_by_class_name("jstree-anchor")
+                # t = ta.find_element_by_class_name("jstree-icon jstree-themeicon")
+                tab_ = tab.find_element_by_xpath('/html/body/div[3]/div/div[2]/div[1]/div[2]/ul/ul/li[5]/ul/li[2]/a')
+                tab_.send_keys('\n')
+                # a_class = ta.find_element_by_xpath('//*[@id="19_anchor"]/i')
+                # tab.click()
+
+                driver.switch_to.frame("ifrm")
+                first = driver.find_element_by_xpath('/html/body/table[3]/tbody')
+                td = tr.find_elements_by_tag_name("td")
+
+                # print(td[1].text, td[2].text)
+                for tr in first.find_elements_by_tag_name("tr"):
+                    pass
+                    # print (s)
+                    # data.append(s)
+                # print(data)
+
+            else :
+                continue
+                # driver.switch_to.frame("cafe_main")
+
+                # driver.switch_to.default_content()
+
+                # driver.to_switch(driver.window_handles[1])
+
+
+
+
+
+
+        # page_btn = driver.
+        # if i == li
+        #     page_btn.click()
+        driver.to_switch(driver.window_handles[0])\
+
+        try:
+            li.send_keys("\n")
+        except:
+            pass
+
+    # browser.implicitly_wait(2)
+
+    # result = driver.find_element_by_class_name("btnPrint")
+    # result.click()
+
+    # o=driver.find_element_by_xpath().text
+    # data.append(o)
+    # o1 = driver.find_element_by_xpath().text
+    # data.append(o1)
+    # t=driver.find_element_by_xpath().text
+    # data.append(t)
+    # t1 = driver.find_element_by_xpath().text
+    # data.append(t1)
+    # t_=driver.find_element_by_xpath().text
+    # data.append(t_)
+    # t_1 = driver.find_element_by_xpath().text
+    # data.append(t_1)
+    # f=driver.find_element_by_xpath().text
+    # data.append(f)
+    # f1 = driver.find_element_by_xpath().text
+    # data.append(f1)
+    # f_=driver.find_element_by_xpath().text
+    # data.append(f_)
+    # f_1 = driver.find_element_by_xpath().text
+    # data.append(f_1)
+    #
+    # print(o1+" "+t1+" "+t_1+" "+f1+" "+f_1)
+
+except NoSuchElementException:
+    print("error")
+    data.append("없음")
+    # continue
+    pass
+driver.quit()
